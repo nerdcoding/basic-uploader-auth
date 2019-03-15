@@ -1,0 +1,96 @@
+GUI: aquire new token (login)
+=============================
+Request:
+    POST /oauth/token
+    Authorization: Basic <client-id:client-password>
+    Content-Type: application/x-www-form-urlencoded
+
+    grant_type: password
+    username: <user>
+    password: <user-password>
+
+Response:
+    200 OK
+    {    "access_token": <>,
+         "token_type": "bearer",
+         "refresh_token": <>,
+         "expires_in": 29,
+         "scope": "read write trust"
+    }
+
+************************************************************************************************************************
+
+Resource Server: Check token
+============================
+Request:
+    GET /oauth/check_token?token=<access_token>
+    Authorization: Basic <client-id:client-password>
+    Content-Type: application/x-www-form-urlencoded
+
+
+Response:
+    200 OK
+    {    "exp": 1551791526,
+          "user_name": "bob",
+          "client_id": "my-client",
+          "scope": ["read", "write", "trust"]
+    }
+
+    400 BAD REQUEST
+    {    "error": "invalid_token",
+          "error_description": "Token has expired“
+    }
+    {    "error": "invalid_token",
+          "error_description": "Token was not recognised“
+    }
+
+************************************************************************************************************************
+
+GUI: access resource server (microservice)
+==========================================
+
+Request:
+    <Method> /<api-url-path>
+    Authorization: Bearer <access_token>
+
+Response:
+    200 OK
+
+    401 UNAUTHORIZEDW
+    {
+        "error": "invalid_token",
+        "error_description": "ecc0f22f-3164-4949-8485-094095975b5e"
+    }
+
+************************************************************************************************************************
+
+GUI: refresh new token
+======================
+Request:
+    POST /oauth//token
+    Authorization: Basic <client-id:client-password>
+    Content-Type: application/x-www-form-urlencoded
+
+    grant_type: refresh_token
+    refresh_token: <refresh_token>
+
+Response:
+    200 OK
+    {    "access_token": <>,
+         "token_type": "bearer",
+         "refresh_token": <>,
+         "expires_in": 29,
+         "scope": "read write trust"
+    }
+
+    400 BAD REQUEST
+    {
+        "error": "invalid_grant",
+        "error_description": "Invalid refresh token: <>“
+    }
+
+    401 UNAUTHORIZED
+    {
+       "error": "invalid_token",
+       "error_description": "Invalid refresh token (expired): <>“
+    }
