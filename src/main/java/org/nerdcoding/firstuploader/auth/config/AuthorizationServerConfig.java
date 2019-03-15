@@ -51,7 +51,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients
                 .inMemory()
                 .withClient("my-client")
-                .secret("{noop}my-secret")
+                .secret(passwordEncoder().encode("my-secret"))
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("read", "write")
                 .accessTokenValiditySeconds(120)
@@ -72,18 +72,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Bean
-    public TokenStore tokenStore () {
+    public TokenStore tokenStore() {
         return new InMemoryTokenStore();
     }
 
     @Bean
-    public PasswordEncoder oauthClientPasswordEncoder() {
-        return new BCryptPasswordEncoder(6);
-    }
-
-    @Bean
-    public PasswordEncoder userPasswordEncoder() {
-        return new BCryptPasswordEncoder(12);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(8);
     }
 
 }

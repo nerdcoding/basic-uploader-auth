@@ -20,12 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final PasswordEncoder userPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public WebSecurityConfig(final PasswordEncoder userPasswordEncoder, final UserDetailsService userDetailsService) {
-        this.userPasswordEncoder = userPasswordEncoder;
+    public WebSecurityConfig(final PasswordEncoder passwordEncoder, final UserDetailsService userDetailsService) {
+        this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
     }
 
@@ -45,7 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService); //.passwordEncoder(userPasswordEncoder);
+    public void globalUserDetails(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
     }
 }

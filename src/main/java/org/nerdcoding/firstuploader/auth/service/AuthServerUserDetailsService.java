@@ -18,12 +18,15 @@
 
 package org.nerdcoding.firstuploader.auth.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +41,19 @@ public class AuthServerUserDetailsService implements UserDetailsService {
      * Temporary use static in-memory map as user database.
      */
     private static final Map<String, UserDetails> IN_MEMORY_USER_DATABASE = new HashMap<>();
-    static {
-        IN_MEMORY_USER_DATABASE.put("bob",  User.withDefaultPasswordEncoder()
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public AuthServerUserDetailsService(final PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostConstruct
+    public void setUp() {
+        IN_MEMORY_USER_DATABASE.put("bob",  User.builder()
                 .username("bob")
-                .password("secret123") // secret123
+                .password(passwordEncoder.encode("secret123"))
                 .authorities(Collections.emptyList())
                 .build());
     }
