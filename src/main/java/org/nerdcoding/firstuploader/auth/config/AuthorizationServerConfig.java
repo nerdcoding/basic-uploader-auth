@@ -21,6 +21,7 @@ package org.nerdcoding.firstuploader.auth.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
@@ -43,8 +47,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenStore tokenStore;
+    //@Autowired
+    //private TokenStore tokenStore;
 
     @Override
     public void configure (ClientDetailsServiceConfigurer clients) throws Exception {
@@ -68,7 +72,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure (AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .authenticationManager(authenticationManager)
-                .tokenStore(tokenStore);
+                .tokenStore(tokenStore())
+                .tokenEnhancer(tokenEnhancer());
+    }
+
+    @Bean
+    @Primary
+    public AuthorizationServerTokenServices tokenServices() {
+        DefaultTokenServices tokenServices = new DefaultTokenServices();
+        tokenServices.setTokenEnhancer(tokenEnhancer());
+        tokenServices.setTokenStore(tokenStore());
+        return tokenServices;
     }
 
     @Bean
@@ -81,4 +95,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         return new BCryptPasswordEncoder(8);
     }
 
+    @Bean
+    public TokenEnhancer tokenEnhancer() {
+        return new DefaultTokenEnhancer();
+    }
 }
