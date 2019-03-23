@@ -19,6 +19,7 @@
 package org.nerdcoding.firstuploader.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -35,6 +36,9 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 /**
  * Configures the token handling of an OAuth2 authorization server.
@@ -46,9 +50,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    //@Autowired
-    //private TokenStore tokenStore;
 
     @Override
     public void configure (ClientDetailsServiceConfigurer clients) throws Exception {
@@ -98,5 +99,26 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public TokenEnhancer tokenEnhancer() {
         return new DefaultTokenEnhancer();
+    }
+
+    /**
+     * Configure {@link CorsFilter} to allow REST calls from the external client.
+     *
+     * @return The {@link FilterRegistrationBean} containing the {@link CorsFilter}.
+     */
+    @Bean
+    public FilterRegistrationBean corsFilter() {
+        final CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        final FilterRegistrationBean bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(0);
+        return bean;
     }
 }
