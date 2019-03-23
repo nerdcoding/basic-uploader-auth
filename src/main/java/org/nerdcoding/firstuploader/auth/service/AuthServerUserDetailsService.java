@@ -26,21 +26,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Service tries to find for given user credentials the appropriate {@link UserDetails}.
  */
 @Service
 public class AuthServerUserDetailsService implements UserDetailsService {
-
-    /**
-     * Temporary use static in-memory map as user database.
-     */
-    private static final Map<String, UserDetails> IN_MEMORY_USER_DATABASE = new HashMap<>();
 
     private final PasswordEncoder passwordEncoder;
 
@@ -49,23 +41,18 @@ public class AuthServerUserDetailsService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
-    public void setUp() {
-        IN_MEMORY_USER_DATABASE.put("bob",  User.builder()
-                .username("bob")
-                .password(passwordEncoder.encode("secret123"))
-                .authorities(Collections.emptyList())
-                .build());
-    }
-
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        if (!IN_MEMORY_USER_DATABASE.containsKey(username)) {
-            throw new UsernameNotFoundException(String.format(
-                    "User with username %s was not found.", username
-            ));
+        if ("bob".equals(username)) {
+            return User.builder()
+                    .username("bob")
+                    .password(passwordEncoder.encode("secret123"))
+                    .authorities(Collections.emptyList())
+                    .build();
         }
+        throw new UsernameNotFoundException(String.format(
+                "User with username %s was not found.", username
+        ));
 
-        return IN_MEMORY_USER_DATABASE.get(username);
     }
 }
