@@ -1,0 +1,32 @@
+
+Small sample application using microservices. This application consist of:
+
+* `basic-uploader-client` +
+A common React.js based GUI which orchestrates all microservices (https://github.com/nerdcoding/basic-uploader-client).
+* `basic-uploader-files` +
+A Spring Boot based microservice to upload and manage files (https://github.com/nerdcoding/basic-uploader-files).
+* `basic-uploader-auth` +
+A Spring Boot based microservice acting as OAuth2 authorization server managing the login and all users
+(https://github.com/nerdcoding/basic-uploader-auth).
+
+
+=== Build & Start applications
+
+To build applications http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java SE 12] and
+http://maven.apache.org/[Maven 3.6.0] (or newer) needs to be installed.
+
+The build is done with a simple:
+```
+mvn clean install
+```
+
+Then the applications could be started with:
+```
+java  -jar target/<jar-name>.jar
+```
+
+
+=== Licensing
+The software of this repository is licensed under the GNU General Public License v2.
+See [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html) for the full license text.
+
