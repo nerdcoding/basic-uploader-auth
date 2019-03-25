@@ -10,11 +10,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>org.nerdcoding.firstuploader.auth</groupId>
-    <artifactId>first-uploader-auth</artifactId>
+    <groupId>org.nerdcoding.basicuploader.auth</groupId>
+    <artifactId>basic-uploader-auth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>first-uploader-auth</name>
-    <description>Demo project for Spring Boot</description>
+    <name>basic-uploader-auth</name>
 
     <properties>
         <java.version>11</java.version>

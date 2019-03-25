@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
  */
 
-package org.nerdcoding.firstuploader.auth.config;
+package org.nerdcoding.basicuploader.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

@@ -1,4 +1,4 @@
-package org.nerdcoding.firstuploader.auth.web;
+package org.nerdcoding.basicuploader.auth.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
