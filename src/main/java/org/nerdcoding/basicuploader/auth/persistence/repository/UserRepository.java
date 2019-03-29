@@ -22,6 +22,10 @@ package org.nerdcoding.basicuploader.auth.persistence.repository;
 import org.nerdcoding.basicuploader.auth.persistence.model.User;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserdataRepository extends CrudRepository<User, Long> {
+import java.util.Optional;
+
+public interface UserRepository extends CrudRepository<User, Long> {
+
+    Optional<User> findByUsername(final String username);
 
 }

@@ -18,15 +18,13 @@
 
 package org.nerdcoding.basicuploader.auth.service;
 
+import org.nerdcoding.basicuploader.auth.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 /**
  * Service tries to find for given user credentials the appropriate {@link UserDetails}.
@@ -34,25 +32,20 @@ import java.util.Collections;
 @Service
 public class AuthServerUserDetailsService implements UserDetailsService {
 
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthServerUserDetailsService(final PasswordEncoder passwordEncoder) {
+    public AuthServerUserDetailsService(final UserRepository userRepository, final PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        if ("bob".equals(username)) {
-            return User.builder()
-                    .username("bob")
-                    .password(passwordEncoder.encode("secret123"))
-                    .authorities(Collections.emptyList())
-                    .build();
-        }
-        throw new UsernameNotFoundException(String.format(
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(
                 "User with username %s was not found.", username
-        ));
-
+        )));
     }
 }

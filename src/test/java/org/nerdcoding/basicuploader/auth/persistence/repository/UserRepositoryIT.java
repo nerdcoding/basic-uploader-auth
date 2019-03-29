@@ -38,12 +38,12 @@ import java.util.Optional;
 
 
 /**
- * Spring based integration test for {@link UserdataRepository}.
+ * Spring based integration test for {@link UserRepository}.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
-public class UserdataRepositoryIT {
+public class UserRepositoryIT {
 
     private static final String USERNAME = "bspencer";
     private static final String PASSWORD = "secret4711";
@@ -58,7 +58,7 @@ public class UserdataRepositoryIT {
     private static final boolean CREDENTIALS_EXPIRED = true;
 
     @Autowired
-    private UserdataRepository subject;
+    private UserRepository subject;
 
     private Long testUserId;
 
@@ -123,6 +123,50 @@ public class UserdataRepositoryIT {
         assertThatThrownBy(() -> subject.findById(null))
                 .isInstanceOf(Exception.class)
                 .hasMessageContaining("must not be null");
+    }
+
+    @Test
+    public void testFindByUsername_whenSearchedWithUsername_thenUserIsFound() {
+        final Optional<User> found = subject.findByUsername(USERNAME);
+        assertThat(found).isNotEmpty();
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getId()).isEqualTo(testUserId));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getUsername()).isEqualTo(USERNAME));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getPassword()).isEqualTo(PASSWORD));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getFirstName()).isEqualTo(FIRST_NAME));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getLastName()).isEqualTo(LAST_NAME));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getEmail()).isEqualTo(EMAIL));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getDayOfBirth()).isEqualTo(DAY_OF_BIRTH));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getRegistrationDate()).isEqualTo(REGISTRATION_DATE));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.getRoles()).containsAll(ROLES));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.isEnabled()).isEqualTo(ENABLED));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.isLocked()).isEqualTo(LOCKED));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.isCredentialsExpired()).isEqualTo(CREDENTIALS_EXPIRED));
+        assertThat(found).hasValueSatisfying(
+                user -> assertThat(user.isCredentialsNonExpired()).isEqualTo(!CREDENTIALS_EXPIRED));
+    }
+
+    @Test
+    public void testFindByUsername_whenSearchedWithNotExistingUsername_thenReturnsEmptyOptional() {
+        final Optional<User> result = subject.findByUsername("this is so wrong!");
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void testFindByUsername_whenSearchedWithNull_thenReturnsEmptyOptional() {
+        final Optional<User> result = subject.findByUsername(null);
+        assertThat(result).isEmpty();
     }
 
 }

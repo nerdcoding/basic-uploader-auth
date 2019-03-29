@@ -199,7 +199,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return locked;
+        return !locked;
     }
 
     public void setLocked(final boolean locked) {
