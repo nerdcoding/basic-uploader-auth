@@ -27,6 +27,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -73,7 +74,7 @@ public class User implements UserDetails {
     @Column(name= "REGISTRATION_DATE", nullable = false)
     private LocalDate registrationDate;
 
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @JoinTable(name = "ROLE", joinColumns = @JoinColumn(name = "USER_ID"))
     @Column(name = "ROLE", nullable = false)
     @Enumerated(EnumType.STRING)
