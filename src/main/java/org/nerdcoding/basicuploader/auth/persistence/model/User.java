@@ -19,6 +19,7 @@
 package org.nerdcoding.basicuploader.auth.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -54,6 +55,7 @@ public class User implements UserDetails {
     @Column(name= "USERNAME", nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(name= "PASSWORD", nullable = false)
     private String password;
 

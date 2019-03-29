@@ -13,11 +13,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 /**
  * Normal Spring Security configuration so secure the authentication manager server.
  */
 @Configuration
+@EnableResourceServer
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -33,10 +35,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        // deny all endpoints, except the /token endpoint to create new tokens (login)
         http
-                .csrf().disable()
-                .authorizeRequests().antMatchers("/token").permitAll()
+                .requestMatchers()
+                .and()
+                .authorizeRequests().antMatchers("/token").permitAll() // login is allowed for anyone
+                .and()
+                .authorizeRequests().antMatchers("/user/**").access("#oauth2.hasScope('read')")
+                .antMatchers(HttpMethod.POST, "/user/**").permitAll() // user registration is allowed for anyone
                 .anyRequest().denyAll();
     }
 

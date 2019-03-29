@@ -18,7 +18,7 @@
 
 package org.nerdcoding.basicuploader.auth.config;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.nerdcoding.basicuploader.auth.persistence.model.User;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -35,10 +35,9 @@ public class DefaultTokenEnhancer implements TokenEnhancer {
 
     @Override
     public OAuth2AccessToken enhance(final OAuth2AccessToken accessToken, final OAuth2Authentication authentication) {
-        final UserDetails user = (UserDetails) authentication.getPrincipal();
+        final User user = (User) authentication.getPrincipal();
         final Map<String, Object> additionalInfo = new HashMap<>();
-
-        additionalInfo.put("username", user.getUsername());
+        additionalInfo.put("user_id", user.getId());
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
 
