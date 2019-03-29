@@ -1,0 +1,32 @@
+<!-- !!!!!!!!!!!!!!!!!!! -->
+<!-- NOTE: Do NOT define <logger ... /> in this file!
+Logging levels are configured in application.properties with an `logging.level.` prefix. -->
+<!-- !!!!!!!!!!!!!!!!!!! -->
+<configuration>
+    <springProperty name="application-name" source="spring.application.name"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+        ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>./logs/@artifactId@.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- delete logs older than 60 days -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} ${application-name} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ROLLING_FILE"/>
+    </root>
+</configuration>
