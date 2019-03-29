@@ -19,12 +19,12 @@
 package org.nerdcoding.basicuploader.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -48,15 +48,29 @@ import org.springframework.web.filter.CorsFilter;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+
+    private final String clientUser;
+    private final String clientPassword;
+
+    public AuthorizationServerConfig(
+            @Autowired final PasswordEncoder passwordEncoder,
+            @Autowired final AuthenticationManager authenticationManager,
+            @Value("${client.user}") final String clientUser,
+            @Value("${client.password}") final String clientPassword) {
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.clientUser = clientUser;
+        this.clientPassword = clientPassword;
+    }
 
     @Override
     public void configure (ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient("my-client")
-                .secret(passwordEncoder().encode("my-secret"))
+                .withClient(clientUser)
+                .secret(passwordEncoder.encode(clientPassword))
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("read", "write")
                 .accessTokenValiditySeconds(300) // five minutes
@@ -64,13 +78,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer security) {
         // Only authenticated clients (withClient() and secret()) are allowed to check tokens.
         security.allowFormAuthenticationForClients().checkTokenAccess("isAuthenticated()");
     }
 
     @Override
-    public void configure (AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure (AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore())
@@ -80,7 +94,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     @Primary
     public AuthorizationServerTokenServices tokenServices() {
-        DefaultTokenServices tokenServices = new DefaultTokenServices();
+        final DefaultTokenServices tokenServices = new DefaultTokenServices();
         tokenServices.setTokenEnhancer(tokenEnhancer());
         tokenServices.setTokenStore(tokenStore());
         return tokenServices;
@@ -89,11 +103,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public TokenStore tokenStore() {
         return new InMemoryTokenStore();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(8);
     }
 
     @Bean
