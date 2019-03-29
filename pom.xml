@@ -109,7 +109,7 @@
                             <dialects>
                                 <param>H2</param>
                             </dialects>
-                            <outputDirectory>${build.outputDirectory}/sql/ddl</outputDirectory>
+                            <outputDirectory>${build.directory}/sql/ddl</outputDirectory>
                             <packages>
                                 <param>org.nerdcoding.basicuploader.auth</param>
                             </packages>

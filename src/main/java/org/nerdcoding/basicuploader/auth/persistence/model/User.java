@@ -50,7 +50,7 @@ public class User implements UserDetails {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name= "USERNAME", nullable = false)
+    @Column(name= "USERNAME", nullable = false, unique = true)
     private String username;
 
     @Column(name= "PASSWORD", nullable = false)
@@ -62,7 +62,7 @@ public class User implements UserDetails {
     @Column(name= "LAST_NAME", nullable = false)
     private String lastName;
 
-    @Column(name= "EMAIL", nullable = false)
+    @Column(name= "EMAIL", nullable = false, unique = true)
     private String email;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
