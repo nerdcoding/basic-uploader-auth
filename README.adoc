@@ -28,5 +28,5 @@ java  -jar target/<jar-name>.jar
 
 === Licensing
 The software of this repository is licensed under the GNU General Public License v2.
-See [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html) for the full license text.
+See https://www.gnu.org/licenses/gpl-2.0.html[LICENSE] for the full license text.
 
